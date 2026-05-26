@@ -13,4 +13,6 @@ RUN chmod +x /tmp/plugins.bash && \
     /tmp/plugins.bash && \
     rm /tmp/plugins.json /tmp/plugins.bash
 
+RUN chown -R 1001:1001 /opt/bitnami/moodle
+
 USER 1001
