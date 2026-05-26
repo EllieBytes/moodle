@@ -16,6 +16,9 @@ services:
         ports:
             - "8080:8080"
         environment:
+            - MOODLE_USERNAME=admin
+            - MOODLE_PASSWORD=1
+            - MOODLE_EMAIL=admin@nothing.local
             - MOODLE_DATABASE_HOST=mariadb
             - MOODLE_DATABASE_USER=bn_moodle
             - MOODLE_DATABASE_PASSWORD=1 # CHANGE THIS (MUST REFLECT MARIADB_PASSWORD)
