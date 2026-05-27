@@ -8,7 +8,6 @@ services:
             args:
                 MOODLE_VERSION: MOODLE_404_STABLE
                 PHP_VERSION: "8.2"
-        image: my-moodle:latest
         container_name: moodle-app
         restart: unless-stopped
         depends_on:
