@@ -1,36 +1,81 @@
-services:
-    mariadb:
-        image: bitnami/mariadb:latest
-        environment:
-            - ALLOW_EMPTY_PASSWORD=yes
-            - MARIADB_USER=bn_moodle
-            - MARIADB_PASSWORD=1 # CHANGE THIS PASSWORD
-            - MARIADB_DATABASE=bitnami_moodle
-            - MARIADB_CHARACTER_SET=utf8mb4
-            - MARIADB_COLLATE=utf8mb4_unicode_ci
-        volumes:
-            - mariadb_data:/bitnami/mariadb
+version: "3.9"
 
+services:
     moodle:
-        build: .
-        ports:
-            - "8080:8080"
-        environment:
-            - MOODLE_USERNAME=admin
-            - MOODLE_PASSWORD=1
-            - MOODLE_EMAIL=admin@nothing.local
-            - MOODLE_DATABASE_HOST=mariadb
-            - MOODLE_DATABASE_USER=bn_moodle
-            - MOODLE_DATABASE_PASSWORD=1 # CHANGE THIS (MUST REFLECT MARIADB_PASSWORD)
-            - MOODLE_DATABASE_NAME=bitnami_moodle
-            - ALLOW_EMPTY_PASSWORD=yes
-        volumes:
-            - moodle_data:/bitnami/moodle
-            - moodledata_data:/bitnami/moodledata
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                MOODLE_VERSION: MOODLE_404_STABLE
+                PHP_VERSION: "8.2"
+        image: my-moodle:latest
+        container_name: moodle-app
+        restart: unless-stopped
         depends_on:
-            - mariadb
+            db:
+                condition: service_healthy
+            redis:
+                condition: service_started
+        ports:
+            - "8080:80"
+        environment:
+            MOODLE_DB_TYPE: mariadb
+            MOODLE_DB_HOST: db
+            MOODLE_DB_PORT: "3306"
+            MOODLE_DB_NAME: moodle
+            MOODLE_DB_USER: moodle
+            MOODLE_DB_PASS: ${MOODLE_DB_PASS:-changeme}
+
+            MOODLE_SITE_URL: http://localhost:8080
+            MOODLE_SITE_NAME: "Computer Tech"
+
+            MOODLE_ADMIN_USER: admin
+            MOODLE_ADMIN_PASS: ${MOODLE_ADMIN_PASS:-Admin1234!}
+            MOODLE_ADMIN_EMAIL: admin@example.com
+
+            PLUGIN_MANIFEST: /etc/moodle/plugins.json
+        volumes:
+            - moodle-data:/var/moodledata
+            - ./plugins.json:/etc/moodle/plugins.json:ro
+        networks:
+            - moodle-net
+
+    db:
+        image: mariadb:10.11
+        container_name: moodle-db
+        restart: unless-stopped
+        environment:
+            MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASS:-rootsecret}
+            MARIADB_DATABASE: moodle
+            MARIADB_USER: moodle
+            MARIADB_PASSWORD: ${MOODLE_DB_PASS:-changeme}
+        volumes:
+            - db-data:/var/lib/mysql
+            - ./config/mariadb.cnf:/etc/mysql/conf.d/moodle.cnf:ro
+        healthcheck:
+            test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+            interval: 10s
+            timeout: 5s
+            retries: 10
+            start_period: 30s
+        networks:
+            - moodle-net
+
+    redis:
+        image: redis:7-alpine
+        container_name: moodle-redis
+        restart: unless-stopped
+        command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+        volumes:
+            - redis-data:/data
+        networks:
+            - moodle-net
 
 volumes:
-    mariadb_data:
-    moodle_data:
-    moodledata_data:
+    moodle-data:
+    db-data:
+    redis-data:
+
+networks:
+    moodle-net:
+        driver: bridge
