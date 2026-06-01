@@ -1,87 +1,87 @@
 FROM ubuntu:22.04
 
-LABEL maintainer="EllieBytes"
-LABEL description="Moodle LMS image."
-
-ARG MOODLE_VERSION=MOODLE_404_STABLE
-ARG MOODLE_DB_TYPE=mariadb
-ARG PHP_VERSION=8.2
+LABEL maintainer="EllieBytes" \
+      moodle.version="5.2" \
+      description="Moodle LMS, purpose designed for Kenney's Class."
 
 ENV DEBIAN_FRONTEND=noninteractive \
-    MOODLE_VERSION=${MOODLE_VERSION} \
-    MOODLE_WWW=/var/www/moodle \
-    MOODLE_DATA=/var/moodledata \
-    MOODLE_DB_TYPE=${MOODLE_DB_TYPE} \
-    PHP_VERSION=${PHP_VERSION}
+    TZ=UTC
+
+ARG PHP_VERSION=8.2
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificate \
-    curl \
-    git \
-    unzip \
-    zip \
-    wget \
-    gnupg \
-    lsb-release \
-    supervisor \
-    cron \
-    apache2 \
-    php${PHP_VERSION} \
-    php${PHP_VERSION}-fpm \
-    php${PHP_VERSION}-cli \
-    php${PHP_VERSION}-mysql \
-    php${PHP_VERSION}-pgsql \
-    php${PHP_VERSION}-xml \
-    php${PHP_VERSION}-mbstring \
-    php${PHP_VERSION}-curl \
-    php${PHP_VERSION}-zip \
-    php${PHP_VERSION}-gd \
-    php${PHP_VERSION}-intl \
-    php${PHP_VERSION}-soap \
-    php${PHP_VERSION}-xmlrpc \
-    php${PHP_VERSION}-redis \
-    php${PHP_VERSION}-opcache \
-    php${PHP_VERSION}-apcu \
-    libapache2-mod-php${PHP_VERSION} \
-    jq \
-    && apt-get clean && rm -fr /var/lib/apt/list/*
+        software-properties-common \
+        ca-certificates \
+        curl \
+        git \
+        unzip \
+        tzdata \
+        cron \
+        gosu \
+        apache2 \
+    && apt-add-repository ppa:ondrej/php -y \
+    && apt-get-update && apt-get-install -y --no-install-reccommends \
+        php${PHP_VERSION} \
+        php${PHP_VERSION}-cli \
+        php${PHP_VERSION}-common \
+        php${PHP_VERSION}-mysql \
+        php${PHP_VERSION}-xml \
+        php${PHP_VERSION}-xmlrpc \
+        php${PHP_VERSION}-curl \
+        php${PHP_VERSION}-gd \
+        php${PHP_VERSION}-mbstring \
+        php${PHP_VERSION}-zip \
+        php${PHP_VERSION}-intl \
+        php${PHP_VERSION}-soap \
+        php${PHP_VERSION}-opcache \
+        php${PHP_VERSION}-readline \
+        php${PHP_VERSION}-sodium \
+        libapache2-mod-php${PHP_VERSION} \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN a2enmod rewrite headers expires deflate php${PHP_VERSION}
-COPY config/apache-moodle.conf /etc/apache2/sites-available/moodle.conf
-RUN a2dissite 000-default && a2ensite moodle
+RUN { \
+        echo "max_input_vars = 5000"; \
+        echo "upload_max_filesize = 512M"; \
+        echo "post_max_size = 512M"; \
+        echo "memory_limit = 256M"; \
+        echo "max_execution_time = 300"; \
+        echo "date.timezone = UTC"; \
+        echo "opcache.enable = 1"; \
+        echo "opcache.memory_consumption = 128"; \
+        echo "opcache.max_accelerated_files = 10000"; \
+        echo "opcache.revalidate_freq = 60"; \
+    } > /etc/php/${PHP_VERSION}/apache2/conf.d/99-moodle.ini \
+    && cp /etc/php/${PHP_VERSION}/apache2/conf.d/99-moodle.ini \
+       /etc/php/${PHP_VERSION}/cli/conf.d/99-moodle.ini
 
-COPY config/php-moodle.ini /etc/php/${PHP_VERSION}/apache2/conf.d/99-moodle.ini
-COPY config/php-moodle.ini /etc/php/${PHP_VERSION}/cli/conf.d/99-moodle.ini
+COPY config/moodle-apache.conf /etc/apache2/sites-available/moodle.conf
 
-RUN git clone --depth=1 \
-    --branch ${MOODLE_VERSION} \
-    https://github.com/moodle/moodle.git \
-    ${MOODLE_WWW} \
-    && chown -R www-data:www-data ${MOODLE_WWW}
+RUN a2enmod rewrite \
+    && a2dissite 000-default \
+    && a2ensite moodle \
+    && echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-RUN mkdir -p ${MOODLE_DATA} \
-    && chown -R www-data:www-data ${MOODLE_DATA} \
-    && chmod 0770 ${MOODLE_DATA}
+ARG MOODLE_VERSION=5.2
+ARG MOODLE_BRANCH=MOODLE_52_STABLE
 
-COPY plugins/ tmp/bundled-plugins/
+RUN git clone --depth=1 --branch ${MOODLE_BRANCH} \
+        https://github.com/moodle/moodle.git /var/www/html/moodle \
+    && chown -R www-data:www-data /var/www/html/moodle
 
-COPY plugins.json /etc/moodle/plugins.json
+RUN mkdir -p /var/moodledata \
+    && chown www-data:www-data /var/moodledata \
+    && chmod 770 /var/moodledata
 
-COPY scripts/install-plugins.sh /usr/local/bin/install-plugins
-COPY scripts/bootstrap.sh /usr/local/bin/bootstrap
-COPY scripts/cron.sh /usr/local/bin/moodle-cron
-RUN chmod +x \
-    /usr/local/bin/moodle-cron \
-    /usr/local/bin/bootstrap \
-    /usr/local/bin/install-plugins
+COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY scripts/moodle-cron.sh /usr/local/bin/moodle-cron.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/moodle-cron.sh
 
-COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+RUN echo "* * * * * www-data /usr/local/bin/moodle-cron.sh >> /var/log/moodle-cron.log 2>&1" \
+        > /etc/cron.d/moodle \
+    && chmod 0644 /etc/cron.d/moodle
 
-RUN echo "*/1 * * * * www-data /usr/local/bin/moodle-cron >> /var/log/moodle-cron.log 2>&1" \
-    > /etc/cron.d/moodle && chmod 0664 /etc/cron.d/moodle
-
-VOLUME [ "${MOODLE_DATA}" ]
+VOLUME ["/var/moodledata"]
 
 EXPOSE 80
 
-ENTRYPOINT [ "/usr/local/bin/bootstrap" ]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

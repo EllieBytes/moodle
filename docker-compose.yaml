@@ -1,80 +1,63 @@
-version: "3.9"
-
 services:
-    moodle:
-        build:
-            context: .
-            dockerfile: Dockerfile
-            args:
-                MOODLE_VERSION: MOODLE_404_STABLE
-                PHP_VERSION: "8.2"
-        container_name: moodle-app
-        restart: unless-stopped
-        depends_on:
-            db:
-                condition: service_healthy
-            redis:
-                condition: service_started
-        ports:
-            - "8080:80"
-        environment:
-            MOODLE_DB_TYPE: mariadb
-            MOODLE_DB_HOST: db
-            MOODLE_DB_PORT: "3306"
-            MOODLE_DB_NAME: moodle
-            MOODLE_DB_USER: moodle
-            MOODLE_DB_PASS: ${MOODLE_DB_PASS:-changeme}
-
-            MOODLE_SITE_URL: http://localhost:8080
-            MOODLE_SITE_NAME: "Computer Tech"
-
-            MOODLE_ADMIN_USER: admin
-            MOODLE_ADMIN_PASS: ${MOODLE_ADMIN_PASS:-Admin1234!}
-            MOODLE_ADMIN_EMAIL: admin@example.com
-
-            PLUGIN_MANIFEST: /etc/moodle/plugins.json
-        volumes:
-            - moodle-data:/var/moodledata
-            - ./plugins.json:/etc/moodle/plugins.json:ro
-        networks:
-            - moodle-net
-
     db:
-        image: mariadb:10.11
-        container_name: moodle-db
+        image: mariadb:11
+        container_name: moodle_db
         restart: unless-stopped
         environment:
-            MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASS:-rootsecret}
-            MARIADB_DATABASE: moodle
-            MARIADB_USER: moodle
-            MARIADB_PASSWORD: ${MOODLE_DB_PASS:-changeme}
+            MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+            MYSQL_DATABASE: "${MOODLE_DB_NAME}"
+            MYSQL_USER: "${MOODLE_DB_USER}"
+            MYSQL_PASSWORD: "${MOODLE_DB_PASS}"
         volumes:
-            - db-data:/var/lib/mysql
-            - ./config/mariadb.cnf:/etc/mysql/conf.d/moodle.cnf:ro
+            - db_data:/var/lib/mysql
+            - ./config/mariadb.conf:/etc/mysql/conf.d/moodle.cnf:ro
+        networks:
+            - moodle_net
         healthcheck:
             test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
             interval: 10s
             timeout: 5s
             retries: 10
             start_period: 30s
-        networks:
-            - moodle-net
 
-    redis:
-        image: redis:7-alpine
-        container_name: moodle-redis
+    moodle:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                PHP_VERSION: "8.2"
+                MOODLE_BRANCH: "MOODLE_52_STABLE"
+        container_name: moodle_app
         restart: unless-stopped
-        command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+        depends_on:
+            db:
+                condition: service_healthy
+        ports:
+            - "${MOODLE_HTTP_PORT:-80}:80"
+        environment:
+            MOODLE_DB_HOST: db
+            MOODLE_DB_PORT: "3306"
+            MOODLE_DB_TYPE: mariadb
+            MOODLE_DB_NAME: "${MOODLE_DB_NAME}"
+            MOODLE_DB_USER: "${MOODLE_DB_USER}"
+            MOODLE_WWWROOT: "${MOODLE_WWWROOT:-http://localhost}"
+            MOODLE_SITE_FULLNAME: "${MOODLE_SITE_FULLNAME:-My Moodle Site}"
+            MOODLE_SITE_SHORTNAME: "${MOODLE_SITE_SHORTNAME:-moodle}"
+            MOODLE_ADMIN_USER: "${MOODLE_ADMIN_USER:-admin}"
+            MOODLE_ADMIN_PASS: "${MOODLE_ADMIN_PASS}"
+            MOODLE_ADMIN_EMAIL: "${MOODLE_ADMIN_EMAIL:-admin@example.com}"
+            MOODLE_DATAROOT: /var/moodledata
         volumes:
-            - redis-data:/data
+            - moodle_data:/var/moodledata
         networks:
-            - moodle-net
+            - moodle_net
 
 volumes:
-    moodle-data:
-    db-data:
-    redis-data:
+    db_data:
+        driver: local
+    moodle_data:
+        driver: local
 
 networks:
-    moodle-net:
+    moodle_net:
         driver: bridge
