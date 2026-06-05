@@ -4,7 +4,7 @@ set -euo pipefail
 log()  { echo "[entrypoint] $*"; }
 die()  { echo "[entrypoint] ERROR: $*" >&2; exit 1; }
 php_cli() { gosu www-data php /var/www/html/moodle/admin/cli/"$@"; }
-composer_cli() { gosu www-data composer --working-dir=/var/www/html/moodle "$@" }
+composer_cli() { gosu www-data composer --working-dir=/var/www/html/moodle "$@"; }
 
 : "${MOODLE_DB_HOST:?Need MOODLE_DB_HOST}"
 : "${MOODLE_DB_NAME:?Need MOODLE_DB_NAME}"
@@ -23,7 +23,7 @@ MOODLE_SITE_SHORTNAME="${MOODLE_SITE_SHORTNAME:-moodle}"
 
 CONFIG_PHP=/var/www/html/moodle/config.php
 
-log "Waiting for database at ${MOODLE_DB_HOST}:${MOODLE_DB_PORT} …"
+log "Waiting for database at ${MOODLE_DB_HOST}:${MOODLE_DB_PORT} ..."
 max_tries=30
 count=0
 until php -r "
@@ -32,7 +32,7 @@ until php -r "
 " 2>/dev/null; do
     count=$((count + 1))
     [ $count -ge $max_tries ] && die "Database not reachable after ${max_tries} attempts."
-    log "  … attempt ${count}/${max_tries}, retrying in 3 s"
+    log "  ... attempt ${count}/${max_tries}, retrying in 3 s"
     sleep 3
 done
 log "Database is reachable."
@@ -41,10 +41,11 @@ if [ -f "/var/www/moodle/composer.json" ]; then
     echo "Synchronizing plugins..."
 
     export COMPOSER_HOME=/tmp/composer
-    mkdir -p /tmp/composer && chown -R www-data:www-data /tmp/composer
+    mkdir -p /tmp/composer
+    chown -R www-data:www-data /tmp/composer
 
     composer_cli install --no-dev --no-interaction --optimize-autoloader
-    log "Plugin synchronization compolete..."
+    log "Plugin synchronization complete..."
 fi
 
 DB_INSTALLED=$(php -r "
@@ -54,7 +55,7 @@ DB_INSTALLED=$(php -r "
 " 2>/dev/null || echo "no")
 
 if [[ "$DB_INSTALLED" == "no" ]]; then
-    log "Fresh install – running Moodle CLI installer …"
+    log "Fresh install – running Moodle CLI installer ..."
     php_cli install.php \
         --lang=en \
         --wwwroot="${MOODLE_WWWROOT}" \
@@ -75,15 +76,15 @@ if [[ "$DB_INSTALLED" == "no" ]]; then
         --agree-license
     log "Installation complete."
 else
-    log "Existing installation detected, running upgrade check …"
+    log "Existing installation detected, running upgrade check ..."
     php_cli upgrade.php --non-interactive
     log "Upgrade check done."
 fi
 
-log "Starting cron …"
+log "Starting cron ..."
 service cron start
 
 chown -R www-data:www-data /var/www/html/moodle
 
-log "Starting Apache …"
+log "Starting Apache ..."
 exec apache2ctl -D FOREGROUND
