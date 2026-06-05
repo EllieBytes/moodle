@@ -19,6 +19,19 @@ services:
             timeout: 5s
             retries: 10
             start_period: 30s
+    jobe:
+        image: trampgeek/jobeinabox:latest
+        container_name: moodle_jobe
+        restart: always
+        ports:
+            - "8080:80"
+        environment:
+            - TZ=UTC
+        deploy:
+            resources:
+                limits:
+                    cpus: 2.0
+                    memory: 4G
 
     moodle:
         build:

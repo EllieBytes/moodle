@@ -7,7 +7,9 @@
         "moodle/composer-installer": "^4.0 || ^5.0",
         "moodleplugin/mod_customcert": "^5.2",
         "moodleplugin/block_configurable_reports": "^4.3",
-        "moodleplugin/theme_moove": "^5.0"
+        "moodleplugin/theme_moove": "^5.0",
+        "moodle-qtype/coderunner": "^5.0",
+        "moodle-qbehavior/adaptive_coderunner": "^5.0"
     },
     "config": {
         "allow-plugins": {
