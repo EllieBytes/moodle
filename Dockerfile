@@ -1,15 +1,14 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 LABEL maintainer="EllieBytes" \
       moodle.version="5.2" \
-      description="Moodle LMS, purpose designed for Kenney's Class."
+      description="Moodle LMS, Made for Kenney's class, revamped for reusability"
 
 ENV DEBIAN_FRONTEND=noninteractive \
     TZ=UTC
 
-ARG PHP_VERSION=8.2
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        # Base
         software-properties-common \
         ca-certificates \
         curl \
@@ -19,24 +18,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         cron \
         gosu \
         apache2 \
-    && apt-add-repository ppa:ondrej/php -y \
-    && apt-get-update && apt-get-install -y --no-install-reccommends \
-        php${PHP_VERSION} \
-        php${PHP_VERSION}-cli \
-        php${PHP_VERSION}-common \
-        php${PHP_VERSION}-mysql \
-        php${PHP_VERSION}-xml \
-        php${PHP_VERSION}-xmlrpc \
-        php${PHP_VERSION}-curl \
-        php${PHP_VERSION}-gd \
-        php${PHP_VERSION}-mbstring \
-        php${PHP_VERSION}-zip \
-        php${PHP_VERSION}-intl \
-        php${PHP_VERSION}-soap \
-        php${PHP_VERSION}-opcache \
-        php${PHP_VERSION}-readline \
-        php${PHP_VERSION}-sodium \
-        libapache2-mod-php${PHP_VERSION} \
+        # PHP
+        php \
+        php-cli \
+        php-common \
+        php-mysql \
+        php-xml \
+        php-xmlrpc \
+        php-curl \
+        php-gd \
+        php-mbstring \
+        php-zip \
+        php-intl \
+        php-soap \
+        php-opcache \
+        php-readline \
+        libapache2-mod-php \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN { \
@@ -50,9 +47,9 @@ RUN { \
         echo "opcache.memory_consumption = 128"; \
         echo "opcache.max_accelerated_files = 10000"; \
         echo "opcache.revalidate_freq = 60"; \
-    } > /etc/php/${PHP_VERSION}/apache2/conf.d/99-moodle.ini \
-    && cp /etc/php/${PHP_VERSION}/apache2/conf.d/99-moodle.ini \
-       /etc/php/${PHP_VERSION}/cli/conf.d/99-moodle.ini
+    } > /etc/php/8.3/apache2/conf.d/99-moodle.ini \
+    && cp /etc/php/8.3/apache2/conf.d/99-moodle.ini \
+       /etc/php/8.3/cli/conf.d/99-moodle.ini
 
 COPY config/moodle-apache.conf /etc/apache2/sites-available/moodle.conf
 

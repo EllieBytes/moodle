@@ -5,8 +5,8 @@ services:
         restart: unless-stopped
         environment:
             MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
-            MYSQL_DATABASE: "${MOODLE_DB_NAME}"
-            MYSQL_USER: "${MOODLE_DB_USER}"
+            MYSQL_DATABASE: "${MOODLE_DB_NAME:-moodledb}"
+            MYSQL_USER: "${MOODLE_DB_USER:-moodledb}"
             MYSQL_PASSWORD: "${MOODLE_DB_PASS}"
         volumes:
             - db_data:/var/lib/mysql
@@ -25,8 +25,8 @@ services:
             context: .
             dockerfile: Dockerfile
             args:
-                PHP_VERSION: "8.2"
-                MOODLE_BRANCH: "MOODLE_52_STABLE"
+                PHP_VERSION: "8.3"
+                MOODLE_BRANCH: "MOODLE_502_STABLE"
         container_name: moodle_app
         restart: unless-stopped
         depends_on:
@@ -38,8 +38,9 @@ services:
             MOODLE_DB_HOST: db
             MOODLE_DB_PORT: "3306"
             MOODLE_DB_TYPE: mariadb
-            MOODLE_DB_NAME: "${MOODLE_DB_NAME}"
-            MOODLE_DB_USER: "${MOODLE_DB_USER}"
+            MOODLE_DB_NAME: "${MOODLE_DB_NAME:-moodledb}"
+            MOODLE_DB_USER: "${MOODLE_DB_USER:-moodle}"
+            MOODLE_DB_PASS: "${MOODLE_DB_PASS}"
             MOODLE_WWWROOT: "${MOODLE_WWWROOT:-http://localhost}"
             MOODLE_SITE_FULLNAME: "${MOODLE_SITE_FULLNAME:-My Moodle Site}"
             MOODLE_SITE_SHORTNAME: "${MOODLE_SITE_SHORTNAME:-moodle}"
