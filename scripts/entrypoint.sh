@@ -80,7 +80,6 @@ else
     php_cli upgrade.php --non-interactive
     log "Upgrade check done."
 fi
-
 log "Starting cron ..."
 echo "* * * * * www-data php /var/www/html/moodle/admin/cli/cron.php > /dev/null" > /etc/cron.d/moodle
 service cron start

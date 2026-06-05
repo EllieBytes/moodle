@@ -8,8 +8,8 @@
         "moodleplugin/mod_customcert": "^5.2",
         "moodleplugin/block_configurable_reports": "^4.3",
         "moodleplugin/theme_moove": "^5.0",
-        "moodle-qtype/coderunner": "^5.0",
-        "moodle-qbehavior/adaptive_coderunner": "^5.0"
+        "trampgeek/moodle-qtype_coderunner": "^5.0",
+        "moodlehq/moodle-qbehavior_adapted_for_coderunner": "^5.0"
     },
     "config": {
         "allow-plugins": {
