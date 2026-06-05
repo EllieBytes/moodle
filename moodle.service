@@ -1,0 +1,15 @@
+[Unit]
+Description=Moodle Service
+Requires=docker.service docker.socket
+After=docker.service docker.socket
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/moodle
+ExecStart=/usr/bin/env docker compose up -d
+ExecStop=/usr/bin/env docker compose down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
