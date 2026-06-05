@@ -36,6 +36,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libapache2-mod-php \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+
 RUN { \
         echo "max_input_vars = 5000"; \
         echo "upload_max_filesize = 512M"; \
@@ -51,6 +53,7 @@ RUN { \
     && cp /etc/php/8.3/apache2/conf.d/99-moodle.ini \
        /etc/php/8.3/cli/conf.d/99-moodle.ini
 
+COPY composer.json /var/www/html/moodle/composer.json
 COPY config/moodle-apache.conf /etc/apache2/sites-available/moodle.conf
 
 RUN a2enmod rewrite \
