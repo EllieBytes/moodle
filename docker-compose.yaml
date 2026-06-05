@@ -34,7 +34,7 @@ services:
                     memory: 4G
     webmin:
         container_name: webmin
-        image: longlivethepenguin/webmin:latest
+        image: longlivethepenguin/webmin:20250819
         hostname: moodle_webmin
         ports:
             - "10000:10000"
