@@ -82,6 +82,7 @@ else
 fi
 
 log "Starting cron ..."
+echo "* * * * * www-data php /var/www/html/moodle/admin/cli/cron.php > /dev/null" > /etc/cron.d/moodle
 service cron start
 
 chown -R www-data:www-data /var/www/html/moodle
