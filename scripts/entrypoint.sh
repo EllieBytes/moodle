@@ -56,14 +56,12 @@ DB_INSTALLED=$(php -r "
 
 if [[ "$DB_INSTALLED" == "no" ]]; then
     log "Fresh install – running Moodle CLI installer ..."
-    php_cli install.php \
-        --lang=en \
+    php_cli install_database.php \
         --fullname="${MOODLE_SITE_FULLNAME}" \
         --shortname="${MOODLE_SITE_SHORTNAME}" \
         --adminuser="${MOODLE_ADMIN_USER}" \
         --adminpass="${MOODLE_ADMIN_PASS}" \
         --adminemail="${MOODLE_ADMIN_EMAIL}" \
-        --non-interactive \
         --agree-license
     log "Installation complete."
 else
