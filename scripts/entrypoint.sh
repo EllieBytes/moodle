@@ -37,7 +37,7 @@ until php -r "
 done
 log "Database is reachable."
 
-if [ -f "/var/www/moodle/composer.json" ]; then
+if [ -f "/var/www/html/moodle/composer.json" ]; then
     echo "Synchronizing plugins..."
 
     export COMPOSER_HOME=/tmp/composer
@@ -70,7 +70,6 @@ else
     log "Upgrade check done."
 fi
 log "Starting cron ..."
-echo "* * * * * www-data php /var/www/html/moodle/admin/cli/cron.php > /dev/null" > /etc/cron.d/moodle
 service cron start
 
 chown -R www-data:www-data /var/www/html/moodle
