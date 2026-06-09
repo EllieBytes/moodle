@@ -1,5 +1,5 @@
 {
-    "name": "EllieBytes/moodle-plugins",
+    "name": "elliebytes/moodle-plugins",
     "description": "Plugins for Moodle",
     "type": "project",
     "license": "GPL-3.0-or-later",
