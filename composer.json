@@ -10,7 +10,7 @@
         },
         {
             "type": "vcs",
-            "url": "https://github.com/trampgeek/moodle-qbehavior_adaptive_adapted_for_coderunner.git"
+            "url": "https://github.com/trampgeek/moodle-qbehaviour_adaptive_adapted_for_coderunner.git"
         }
     ],
     "require": {
