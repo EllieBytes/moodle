@@ -68,6 +68,7 @@ RUN git clone --depth=1 --branch ${MOODLE_BRANCH} \
     && chown -R www-data:www-data /var/www/html/moodle
 
 COPY composer.json /var/www/html/moodle/composer.json
+COPY config/config.php /var/www/html/moodle/config.php
 
 RUN mkdir -p /var/moodledata \
     && chown www-data:www-data /var/moodledata \

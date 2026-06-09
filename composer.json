@@ -3,13 +3,23 @@
     "description": "Plugins for Moodle",
     "type": "project",
     "license": "GPL-3.0-or-later",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/trampgeek/moodle-qtype_coderunner.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/trampgeek/moodle-qbehavior_adaptive_adapted_for_coderunner.git"
+        }
+    ],
     "require": {
         "moodle/composer-installer": "^4.0 || ^5.0",
         "moodleplugin/mod_customcert": "^5.2",
         "moodleplugin/block_configurable_reports": "^4.3",
         "moodleplugin/theme_moove": "^5.0",
-        "trampgeek/moodle-qtype_coderunner": "^5.0",
-        "moodlehq/moodle-qbehavior_adapted_for_coderunner": "^5.0"
+        "trampgeek/moodle-qtype_coderunner": "dev-master",
+        "trampgeek/moodle-qbehavior_adaptive_adapted_for_coderunner": "dev-master"
     },
     "config": {
         "allow-plugins": {

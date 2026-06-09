@@ -24,7 +24,7 @@ services:
         container_name: moodle_jobe
         restart: always
         ports:
-            - "8080:80"
+            - "8080:9063"
         environment:
             - TZ=UTC
         deploy:
@@ -40,6 +40,7 @@ services:
             - "10000:10000"
         volumes:
             - webmin_data:/etc/webmin
+            - /var/run/docker.sock:/var/run/docker.sock
         networks:
             - moodle_net
         restart: unless-stopped

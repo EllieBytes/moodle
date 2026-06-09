@@ -58,15 +58,6 @@ if [[ "$DB_INSTALLED" == "no" ]]; then
     log "Fresh install – running Moodle CLI installer ..."
     php_cli install.php \
         --lang=en \
-        --wwwroot="${MOODLE_WWWROOT}" \
-        --dataroot="${MOODLE_DATAROOT}" \
-        --dbtype="${MOODLE_DB_TYPE}" \
-        --dbhost="${MOODLE_DB_HOST}" \
-        --dbname="${MOODLE_DB_NAME}" \
-        --dbuser="${MOODLE_DB_USER}" \
-        --dbpass="${MOODLE_DB_PASS}" \
-        --dbport="${MOODLE_DB_PORT}" \
-        --prefix=mdl_ \
         --fullname="${MOODLE_SITE_FULLNAME}" \
         --shortname="${MOODLE_SITE_SHORTNAME}" \
         --adminuser="${MOODLE_ADMIN_USER}" \
