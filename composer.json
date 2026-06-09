@@ -5,12 +5,30 @@
     "license": "GPL-3.0-or-later",
     "repositories": [
         {
-            "type": "git",
-            "url": "https://github.com/trampgeek/moodle-qtype_coderunner.git"
+            "type": "package",
+            "package": {
+                "name": "trampgeek/moodle-qtype_coderunner",
+                "version": "dev-master",
+                "type": "moodle-qtype",
+                "source": {
+                    "url": "https://github.com/trampgeek/moodle-qtype_coderunner.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
         },
         {
-            "type": "git",
-            "url": "https://github.com/trampgeek/moodle-qbehaviour_adaptive_adapted_for_coderunner.git"
+            "type": "package",
+            "package": {
+                "name": "trampgeek/moodle-qbehaviour_adaptive_adapted_for_coderunner",
+                "version": "dev-master",
+                "type": "moodle-qbehaviour",
+                "source": {
+                    "url": "https://github.com/trampgeek/moodle-qbehaviour_adaptive_adapted_for_coderunner.git",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
         }
     ],
     "require": {
@@ -19,7 +37,7 @@
         "moodleplugin/block_configurable_reports": "^4.3",
         "moodleplugin/theme_moove": "^5.0",
         "trampgeek/moodle-qtype_coderunner": "dev-master",
-        "trampgeek/moodle-qbehavior_adaptive_adapted_for_coderunner": "dev-master"
+        "trampgeek/moodle-qbehaviour_adaptive_adapted_for_coderunner": "dev-master"
     },
     "config": {
         "allow-plugins": {
