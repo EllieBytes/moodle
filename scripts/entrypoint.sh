@@ -44,6 +44,7 @@ if [ -f "/var/www/html/moodle/composer.json" ]; then
     mkdir -p /tmp/composer
     chown -R www-data:www-data /tmp/composer
 
+    composer_cli update
     composer_cli install --no-dev --no-interaction --optimize-autoloader
     log "Plugin synchronization complete..."
 fi
