@@ -44,8 +44,7 @@
     },
     "config": {
         "allow-plugins": {
-            "moodle/composer-installer": true,
-            "composer/installers": true
+            "*": true
         },
         "sort-packages": true
     }
