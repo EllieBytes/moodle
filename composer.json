@@ -29,13 +29,16 @@
                     "reference": "master"
                 }
             }
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/mdjnelson/moodle-mod_customcert"
         }
     ],
     "require": {
-        "moodle/composer-installer": "^4.0 || ^5.0",
-        "moodleplugin/mod_customcert": "^5.2",
-        "moodleplugin/block_configurable_reports": "^4.3",
-        "moodleplugin/theme_moove": "^5.0",
+        "moodle/composer-installer": "^1.2.2",
+        "mdjnelson/mod_customcert": "^5.2",
+        "fmcorz/moodle-block_xp": "^20.0",
         "trampgeek/moodle-qtype_coderunner": "dev-master",
         "trampgeek/moodle-qbehaviour_adaptive_adapted_for_coderunner": "dev-master"
     },
