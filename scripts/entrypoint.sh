@@ -71,9 +71,7 @@ else
     log "Upgrade check done."
 fi
 log "Starting cron ..."
-service cron start &
-
-chown -R www-data:www-data /var/www/html/moodle
+service cron start
 
 log "Starting Apache ..."
 exec apache2ctl -D FOREGROUND
