@@ -37,7 +37,7 @@
     ],
     "require": {
         "moodle/composer-installer": "^1.2.2",
-        "mdjnelson/mod_customcert": "^5.2",
+        "mdjnelson/moodle-mod_customcert": "^5.2",
         "fmcorz/moodle-block_xp": "^20.0",
         "trampgeek/moodle-qtype_coderunner": "dev-master",
         "trampgeek/moodle-qbehaviour_adaptive_adapted_for_coderunner": "dev-master"
