@@ -19,7 +19,7 @@ $CFG->dboptions = [
 ];
 
 $wwwroot = getenv("MOODLE_WWWROOT") ?: "http://localhost";
-$http_port = getenv("MOODLE_DB_PORT") ?: "";
+$http_port = "80";
 
 if (!empty($http_port) && $http_port !== "80" && $http_port !== "443") {
     if (strpos($wwwroot, ":" . $http_port) === false) {

@@ -73,6 +73,8 @@ services:
             MOODLE_ADMIN_PASS: "${MOODLE_ADMIN_PASS}"
             MOODLE_ADMIN_EMAIL: "${MOODLE_ADMIN_EMAIL:-admin@example.com}"
             MOODLE_DATAROOT: /var/moodledata
+            JOBE_HOST: jobe
+            JOBE_PORT: "9063"
         volumes:
             - moodle_data:/var/moodledata
         networks:
