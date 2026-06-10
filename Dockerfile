@@ -84,7 +84,7 @@ RUN echo "* * * * * www-data /usr/local/bin/moodle-cron.sh >> /var/log/moodle-cr
     && chown root:root /etc/cron.d/moodle \
     && chmod 0600 /etc/cron.d/moodle
 
-RUN chown -R www-data:www-data /var/www/html/moodle
+RUN chown www-data:www-data /var/www/html/moodle
 
 VOLUME ["/var/moodledata"]
 
