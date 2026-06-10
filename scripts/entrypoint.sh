@@ -71,7 +71,7 @@ else
     log "Upgrade check done."
 fi
 log "Starting cron ..."
-service cron start
+service cron start &
 
 chown -R www-data:www-data /var/www/html/moodle
 
