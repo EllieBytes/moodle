@@ -58,8 +58,13 @@ else
     php_cli upgrade.php --non-interactive
     log "Upgrade check done."
 fi
+
+printenv | grep -v "^_=" | sed 's/\(.*\)=/export \1="\2"/' > /etc/environment.sh
+chmod 644 /etc/environment.sh
+
 log "Starting cron ..."
 service cron start
+crontab /etc/cron.d/moodle
 
 log "Starting Apache ..."
 exec apache2ctl -D FOREGROUND
