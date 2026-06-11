@@ -71,7 +71,7 @@ COPY composer.json /var/www/html/moodle/composer.json
 COPY config/config.php /var/www/html/moodle/config.php
 
 RUN cd /var/www/html/moodle && \
-    composer update && \
+    composer update --no-interaction && \
     composer install --no-dev --no-interaction && \
     chown -R www-data:www-data /var/www/html/moodle
 
