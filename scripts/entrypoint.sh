@@ -59,7 +59,7 @@ else
     log "Upgrade check done."
 fi
 
-printenv | grep -v "^_=" | sed 's/\(.*\)=/export \1="\2"/' > /etc/environment.sh
+printenv | grep -v "^_=" | sed 's/\(.*\)=\(.*\)/export \1="\2"/' > /etc/environment.sh
 chmod 644 /etc/environment.sh
 
 log "Starting cron ..."
