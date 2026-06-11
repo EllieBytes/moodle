@@ -65,11 +65,14 @@ ARG MOODLE_VERSION=5.2
 ARG MOODLE_BRANCH=MOODLE_52_STABLE
 
 RUN git clone --depth=1 --branch ${MOODLE_BRANCH} \
-        https://github.com/moodle/moodle.git /var/www/html/moodle \
-    && chown -R www-data:www-data /var/www/html/moodle
+        https://github.com/moodle/moodle.git /var/www/html/moodle
 
 COPY composer.json /var/www/html/moodle/composer.json
 COPY config/config.php /var/www/html/moodle/config.php
+
+RUN cd /var/www/html/moodle && \
+    composer install --no-dev --no-interaction && \
+    chown -R www-data:www-data /var/www/html/moodle
 
 RUN mkdir -p /var/moodledata \
     && chown www-data:www-data /var/moodledata \

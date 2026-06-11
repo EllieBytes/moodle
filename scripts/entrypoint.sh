@@ -37,18 +37,6 @@ until php -r "
 done
 log "Database is reachable."
 
-if [ -f "/var/www/html/moodle/composer.json" ]; then
-    echo "Synchronizing plugins..."
-
-    export COMPOSER_HOME=/tmp/composer
-    mkdir -p /tmp/composer
-    chown -R www-data:www-data /tmp/composer
-
-    composer_cli update
-    composer_cli install --no-dev --no-interaction --optimize-autoloader
-    log "Plugin synchronization complete..."
-fi
-
 DB_INSTALLED=$(php -r "
     \$c = new mysqli('${MOODLE_DB_HOST}', '${MOODLE_DB_USER}', '${MOODLE_DB_PASS}', '${MOODLE_DB_NAME}', ${MOODLE_DB_PORT});
     \$r = \$c->query(\"SHOW TABLES LIKE 'mdl_config'\");
