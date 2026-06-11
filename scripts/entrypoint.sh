@@ -66,6 +66,6 @@ log "Starting cron ..."
 service cron start
 crontab /etc/cron.d/moodle
 
-chown www-data:www-data /var/www/html/moodle
+chown -R www-data:www-data /var/www/html/moodle
 log "Starting Apache ..."
 exec apache2ctl -D FOREGROUND
