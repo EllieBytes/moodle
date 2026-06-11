@@ -83,13 +83,11 @@ COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY scripts/moodle-cron.sh /usr/local/bin/moodle-cron.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/moodle-cron.sh
 
-RUN echo "* * * * * www-data /usr/local/bin/moodle-cron.sh >> /var/log/moodle-cron.log 2>&1" \
+RUN echo "* * * * * gosu www-data /usr/local/bin/moodle-cron.sh >> /var/log/moodle-cron.log 2>&1" \
         > /etc/cron.d/moodle \
     && echo "" >> /etc/cron.d/moodle \
     && chown root:root /etc/cron.d/moodle \
     && chmod 0644 /etc/cron.d/moodle
-
-RUN crontab /etc/cron.d/moodle
 
 RUN chown www-data:www-data /var/www/html/moodle
 
