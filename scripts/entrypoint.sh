@@ -66,6 +66,10 @@ log "Starting cron ..."
 service cron start
 crontab /etc/cron.d/moodle
 
-chown -R www-data:www-data /var/www/html/moodle
+if [ "$(stat -c '%U' /var/www/html/moodle)" != "www-data" ]; then
+    log "Transferring ownership to www-data."
+    chown -R www-data:www-data /var/www/html/moodle
+fi
+
 log "Starting Apache ..."
 exec apache2ctl -D FOREGROUND
