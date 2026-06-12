@@ -29,6 +29,7 @@ services:
             - "8080:9063"
         environment:
             - TZ=UTC
+            - JOBE_ALLOW_HOSTS=moodle,moodle_app
         deploy:
             resources:
                 limits:
