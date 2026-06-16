@@ -35,19 +35,6 @@ services:
                 limits:
                     cpus: 2.0
                     memory: 4G
-    webmin:
-        container_name: webmin
-        image: longlivethepenguin/webmin:20250819
-        hostname: moodle_webmin
-        ports:
-            - "10000:10000"
-        volumes:
-            - webmin_data:/etc/webmin
-            - /var/run/docker.sock:/var/run/docker.sock
-        networks:
-            - moodle_net
-        restart: unless-stopped
-
     moodle:
         build:
             context: .
@@ -82,16 +69,11 @@ services:
             - moodle_data:/var/moodledata
         networks:
             - moodle_net
-
 volumes:
     db_data:
         driver: local
     moodle_data:
         driver: local
-    webmin_data:
-        name: "webmin_data"
-        driver: local
-
 networks:
     moodle_net:
         driver: bridge
