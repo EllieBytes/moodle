@@ -6,7 +6,7 @@ VOLUMES=$(docker volume ls -q)
 for VOL in $VOLUMES; do
     echo "Backing up $VOL"
 
-    docker run --rm -v "${VOL}:/source:ro" -v "${BACKUPS}:/backup:ro" alpine \
+    docker run --rm -v "${VOL}:/source:ro" -v "${BACKUPS}:/backup" alpine \
         tar czf "/backup/${VOL}-$(date +%Y_%m_%d_%H_%M).tgz" -C /source .
 done
 
